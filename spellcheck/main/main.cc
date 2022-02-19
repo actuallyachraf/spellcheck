@@ -3,13 +3,10 @@
 #include "../spell-check.h"
 #include "../test.h"
 
-int main() {
-  std::string text =
-      "Some people, when confronted with a problem, think "
-      "\"I know, I'll use regular expressions.\" "
-      "Now they have two problems.";
-  auto words = spellcheck(text);
+const std::string WORDS_FILE_PATH =
+    "/home/moff/github/cpp-spellcheck/spellcheck/data/words.txt";
 
+int main() {
   auto splits = countSplits("hello");
   auto deletes = countDeletes(splits);
   auto transposes = countTransposes(splits);
@@ -114,6 +111,15 @@ int main() {
   ASSERT_VECTOR_EQUALS(deletes, EXPECTED_DELETES);
   ASSERT_VECTOR_EQUALS(transposes, EXPECTED_TRANSPOSES);
   ASSERT_VECTOR_EQUALS(inserts, EXPECTED_INSERTS);
-  ASSERT_WORD_IN_SET(EXPECTED_EDITS, edits);
+  ASSERT_VECTOR_EQUALS(edits, EXPECTED_EDITS);
+
+  auto myDict = lazyReadWords(WORDS_FILE_PATH);
+  std::vector<std::string> words{"speling", "korrectud"};
+  std::cout << "Checking spelling for words:\n";
+
+  for (auto& word : words) {
+    std::cout << "Input:" << word << " Corrected:" << spellcheck(word, myDict)
+              << '\n';
+  }
   return 0;
 }
